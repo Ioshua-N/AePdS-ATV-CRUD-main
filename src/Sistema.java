@@ -20,10 +20,44 @@ public class Sistema
 
         while(!validLogin)
         {
-            System.out.print("Insira o nome de usuário: ");
+            System.out.print("\nInsira o nome de usuário: ");
             String usuario = scanner.nextLine();
             System.out.print("Insira a senha: ");
             String senha = scanner.nextLine();
+
+            boolean foundRecords = false;
+
+            try
+            {
+                // make connection
+                Connection connection = SQLConnection.open();
+                Statement s = connection.createStatement();
+
+                // make query
+                ResultSet rs = s.executeQuery("select * from Logins");
+
+                while (rs.next())
+                {
+                    foundRecords = true;
+                    String usuarioRs = rs.getString("usuario");
+                    String senhaRs = rs.getString("senha");
+
+                    if (usuario.equals(usuarioRs) && senha.equals(senhaRs))
+                    {
+                        validLogin = true;
+                        exibirMenu();
+                    }
+                }
+
+                if (!foundRecords)
+                {
+                    System.out.println("Nenhum registro encontrado.");
+                }
+            }
+            catch (Exception e)
+            {
+                e.printStackTrace();
+            }
 
             if(usuario.equals(user) && senha.equals(password))
             {
@@ -37,17 +71,73 @@ public class Sistema
         }
     }
 
+    public void menuLogin()
+    {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("\n--------< Menu >--------\n");
+        System.out.println("1 - Fazer login ->");
+        System.out.println("2 - Cadastrar usuário ->");
+
+        System.out.print("\nEscolha uma opção: ");
+        int opcao = scanner.nextInt();
+
+        switch (opcao)
+        {
+            case 1:
+                login();
+                break;
+            case 2:
+                cadastro();
+                break;
+            default:
+                System.out.println("Opção inválida. Insira uma opção válida. ");
+        }
+    }
+
+    private void cadastro()
+    {
+        System.out.println("\n--------< Menu de Login >--------\n");
+        System.out.print("Insira o nome de usuário: ");
+        String usuario = scanner.nextLine();
+
+        System.out.print("Insira a senha: ");
+        String senha = scanner.nextLine();
+
+        try
+        {
+            // make connection
+            Connection connection = SQLConnection.open();
+            Statement s = connection.createStatement();
+
+            // insert
+            s.executeUpdate
+            (
+                    "insert into Logins (usuario, senha) values ('" + usuario + "', '" + senha + "')"
+            );
+
+            System.out.println("\nCadastro concluido com sucesso. ");
+
+            connection.close();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        menuLogin();
+    }
+
     private void exibirMenu()
     {
         while(true)
         {
             Scanner scanner = new Scanner(System.in);
-            System.out.println("\n--------< Menu >--------\n");
-            System.out.println("1 - Inserir Produto ->");
-            System.out.println("2 - Consultar Produto ->");
-            System.out.println("3 - Alterar Produto ->");
-            System.out.println("4 - Remover Produto ->");
-            System.out.println("5 - Mostrar todos os Produtos ->");
+            System.out.println("\n|-----------< Menu >-------------|");
+            System.out.println("|1 - Inserir Produto ->          |");
+            System.out.println("|2 - Consultar Produto ->        |");
+            System.out.println("|3 - Alterar Produto ->          |");
+            System.out.println("|4 - Remover Produto ->          |");
+            System.out.println("|5 - Mostrar todos os Produtos ->|");
 
             System.out.print("\nEscolha uma opção: ");
             int opcao = scanner.nextInt();
