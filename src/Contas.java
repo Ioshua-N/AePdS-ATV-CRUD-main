@@ -1,3 +1,5 @@
+import java.security.MessageDigest;
+import java.security.SecureRandom;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -33,22 +35,32 @@ public class Contas
 
     private void cadastro()
     {
-        System.out.println("\n--------< Menu de Login >--------\n");
+        //limpar buffer
+        scanner.nextLine();
+
+        System.out.println("\n--------< Menu de Cadastro >--------\n");
         System.out.print("Insira o nome de usuário: ");
         String usuario = scanner.nextLine();
 
         System.out.print("Insira a senha: ");
         String senha = scanner.nextLine();
 
+
+         String senhaCifrada = cifrarSenha(senha);
+
+
         // solid
         Banco banco = new Banco();
-        banco.cadastroBanco(usuario, senha);
+        banco.cadastroBanco(usuario, senhaCifrada);
 
         menuConta();
     }
 
     public void login()
     {
+        //limpar buffer
+        scanner.nextLine();
+
         System.out.print("\nInsira o nome de usuário: ");
         String usuario = scanner.nextLine();
         System.out.print("Insira a senha: ");
@@ -57,7 +69,7 @@ public class Contas
         boolean foundRecords = false;
 
         Banco banco = new Banco();
-        banco.loginBanco(foundRecords, usuario, senha);
+        banco.loginBanco(foundRecords, usuario, cifrarSenha(senha));
 
         if(usuario.equals(user) && senha.equals(password))
         {
@@ -72,4 +84,30 @@ public class Contas
             menuConta();
         }
     }
+
+    private static String cifrarSenha(String senha)
+    {
+        try
+        {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+
+            byte[] senhaCifradaByte = md.digest(senha.getBytes());
+
+            StringBuilder senhaCifrada = new StringBuilder();
+
+            for(byte b: senhaCifradaByte){
+                senhaCifrada.append(String.format("%02X", b));
+            }
+
+            return senhaCifrada.toString();
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+
 }

@@ -126,9 +126,7 @@ public class Sistema
     {
         Banco banco = new Banco();
 
-        for (int i = 0; i < produtos.size(); i++)
-        {
-            banco.consultarBanco(i);
-        }
+        banco.consultarTodosBanco();
+
     }
 }

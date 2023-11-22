@@ -92,17 +92,17 @@ public class Banco
             Statement s = connection.createStatement();
 
             // make query
-            ResultSet rs = s.executeQuery("select * from Accounts where id = '" + id + "'");
+            ResultSet rs = s.executeQuery("select * from Produto where id = '" + id + "'");
 
             // check if the rs has a row
             if (rs.next())
             {
                 // show query
-                System.out.println("ID: " + rs.getInt("id") + "Name: " + rs.getString("name") + "Balance: " + rs.getFloat("balance"));
+                System.out.println("ID: " + rs.getInt("id") + "Name: " + rs.getString("nome") + "Balance: " + rs.getFloat("preco"));
             }
             else
             {
-                System.out.println("No account found with ID " + id);
+                System.out.println("Nenhum produto encontrado com esse ID: " + id);
             }
 
             // close resources
@@ -150,6 +150,42 @@ public class Banco
                     );
 
             System.out.println("\nProduto removido com sucesso.");
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void consultarTodosBanco()
+    {
+        try
+        {
+            // make connection
+            Connection connection = SQLConnection.open();
+            Statement s = connection.createStatement();
+
+            // make query
+            ResultSet rs = s.executeQuery("select * from Produto");
+
+            // check if the rs has a row
+            if (rs.next())
+            {
+                while(rs.next())
+                {
+                    //show query
+                    System.out.println("ID: " + rs.getInt("id") + " | Nome: " + rs.getString("nome") + " | Preço: " + rs.getFloat("preco"));
+                }
+            }
+            else
+            {
+                System.out.println("Nenhum produto encontrado.");
+            }
+
+            // close resources
+            rs.close();
+            s.close();
+            connection.close();
         }
         catch (Exception e)
         {
